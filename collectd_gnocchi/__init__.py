@@ -37,12 +37,13 @@ class Gnocchi(object):
             if authurl is None:
                 raise RuntimeError(
                     "Please specify `authurl` for Keystone auth_mode")
-            auth = identity.Password(authurl,
-                                     conf.get("userid"),
-                                     conf.get("projectid"),
-                                     conf.get("password"),
-                                     conf.get("userdomainname"),
-                                     conf.get("projectdomainname"))
+            auth = identity.Password(authurl = authurl,
+                                     username = conf.get("username"),
+                                     project_name = conf.get("projectname"),
+                                     password = conf.get("password"),
+                                     user_domain_name = conf.get("userdomainname"),
+                                     project_domain_name = conf.get("projectdomainname")
+                                    )
         elif auth_mode == "basic":
             auth = gnocchiclient.auth.GnocchiBasicPlugin(
                 conf.get("user", "admin"),
@@ -66,7 +67,7 @@ class Gnocchi(object):
 
         try:
             self.g.resource_type.get("collectd")
-        except exceptions.ResourceNotFound:
+        except exceptions.ResourceTypeNotFound:
             self.g.resource_type.create({
                 "name": self._resource_type,
                 "attributes": {
